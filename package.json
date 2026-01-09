@@ -1,13 +1,30 @@
 {
-  "name": "banlic-server",
+  "name": "banlic-pasahero",
   "version": "1.0.0",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
+  "private": true,
   "dependencies": {
-    "express": "^5.2.1",
-    "socket.io": "^4.8.3",
-    "cors": "^2.8.5"
+    "@angular/common": "^16.2.0",
+    "@angular/core": "^16.2.0",
+    "@angular/forms": "^16.2.0",
+    "@angular/platform-browser": "^16.2.0",
+    "@angular/router": "^16.2.0",
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/android": "^5.0.0",
+    "@ionic/angular": "^7.0.0",
+    "rxjs": "^7.8.0",
+    "socket.io-client": "^4.7.0",
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^16.2.0",
+    "@angular/cli": "^16.2.0",
+    "@angular/compiler-cli": "^16.2.0",
+    "@types/leaflet": "^1.9.4",
+    "typescript": "~5.2.0"
+  },
+  "scripts": {
+    "start": "ionic serve",
+    "build": "ionic build",
+    "android": "npx cap open android"
   }
 }
