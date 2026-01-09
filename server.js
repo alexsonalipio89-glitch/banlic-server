@@ -1,32 +1,38 @@
 const express = require('express');
 const http = require('http');
-const { Server } = require('socket.io');
 const cors = require('cors');
+const { Server } = require('socket.io');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
-
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
 
-let passengers = [];
+// Socket.IO setup
+const io = new Server(server, {
+  cors: {
+    origin: "*", // allow all origins
+    methods: ["GET", "POST"]
+  }
+});
 
+// Listen for connections
 io.on('connection', (socket) => {
-  socket.on('passengerLocation', (data) => {
-    passengers = passengers.filter(p => p.id !== socket.id);
-    passengers.push({ id: socket.id, ...data });
-    io.emit('passengers', passengers);
-  });
+  console.log('A client connected:', socket.id);
 
-  socket.on('driverLocation', (data) => {
-    io.emit('passengers', passengers);
+  // Receive passenger location
+  socket.on('passenger-location', (data) => {
+    console.log('Passenger location:', data);
+    // Broadcast to all drivers (or everyone except sender)
+    socket.broadcast.emit('new-passenger', data);
   });
 
   socket.on('disconnect', () => {
-    passengers = passengers.filter(p => p.id !== socket.id);
-    io.emit('passengers', passengers);
+    console.log('Client disconnected:', socket.id);
   });
 });
 
-server.listen(process.env.PORT || 3000, () => console.log('Server running'));
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
