@@ -1,38 +1,39 @@
 const express = require('express');
 const http = require('http');
-const cors = require('cors');
 const { Server } = require('socket.io');
+const cors = require('cors');
 
 const app = express();
 app.use(cors());
-const server = http.createServer(app);
+app.use(express.json());
 
-// Socket.IO setup
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // allow all origins
-    methods: ["GET", "POST"]
+    origin: '*', // allow all origins for now
+    methods: ['GET', 'POST']
   }
 });
 
-// Listen for connections
+// When a passenger connects
 io.on('connection', (socket) => {
-  console.log('A client connected:', socket.id);
+  console.log('A client connected');
 
-  // Receive passenger location
   socket.on('passenger-location', (data) => {
     console.log('Passenger location:', data);
-    // Broadcast to all drivers (or everyone except sender)
-    socket.broadcast.emit('new-passenger', data);
+    // broadcast location to all drivers
+    socket.broadcast.emit('passenger-update', data);
   });
 
   socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
+    console.log('A client disconnected');
   });
 });
 
+// Use Railway port if provided, otherwise default to 3000
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
